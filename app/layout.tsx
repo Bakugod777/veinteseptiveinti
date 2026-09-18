@@ -1,10 +1,24 @@
 import { Analytics } from '@vercel/analytics/next'
+import { Cormorant_Garamond, Manrope } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
+const display = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-display',
+})
+
+const ui = Manrope({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-ui',
+})
+
 export const metadata: Metadata = {
-  title: 'Mi Detalle Para ti',
-  description: 'Una carta digital para Jesenia.',
+  title: 'Mi lugar favorito es contigo',
+  description: 'Una carta digital para Jessenia.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -26,10 +40,10 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light dark',
+  colorScheme: 'light',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' },
+    { media: '(prefers-color-scheme: light)', color: '#f4e7e1' },
+    { media: '(prefers-color-scheme: dark)', color: '#f4e7e1' },
   ],
 }
 
@@ -39,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" className={`${display.variable} ${ui.variable}`}>
       <body className="antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
