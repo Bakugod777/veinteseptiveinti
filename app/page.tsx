@@ -89,7 +89,7 @@ export default function Page() {
           <em>es contigo.</em>
         </h1>
         <p className="intro">
-          Jessenia, hice este rincón para dejarte tres cosas que a veces se me quedan a medias cuando te hablo: un poema, una carta, y la costumbre rara de guardarte pedazos del mundo.
+          Jesenia, hice este rincón para dejarte tres cosas que a veces se me quedan a medias cuando te hablo: un poema, una carta, y la costumbre rara de guardarte pedazos del mundo.
         </p>
 
         {!isLetterOpen ? (
