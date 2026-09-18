@@ -378,11 +378,27 @@ h1 em {
 }
 
 .keepsake:hover,
-.keepsake.is-active {
+.keepsake.is-active,
+.keepsake.is-playing {
   transform: translateY(-4px) scale(1.04);
   border-color: #bd6671;
   background: #fff;
   z-index: 4;
+}
+
+.keepsake.is-playing {
+  box-shadow: 0 12px 28px #b7596740;
+  animation: keepsake-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes keepsake-pulse {
+  0%,
+  100% {
+    box-shadow: 0 10px 24px #ae777328;
+  }
+  50% {
+    box-shadow: 0 14px 30px #b7596755;
+  }
 }
 
 .keepsake-mark {
@@ -412,6 +428,89 @@ h1 em {
   text-align: left;
   box-shadow: 0 12px 28px #ae777330;
   animation: fade-up 0.3s ease both;
+}
+
+.playlist-panel {
+  width: min(100%, 520px);
+  margin: 8px 0 28px;
+  padding: 18px 18px 14px;
+  border: 1px solid #e3b7b1;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fffaf6f5, #f8ebe6f0);
+  box-shadow: 0 16px 36px #ae777330;
+  text-align: left;
+  animation: letter-reveal 0.45s ease both;
+}
+
+.playlist-kicker {
+  margin: 0 0 12px;
+  color: #b75967;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.playlist-tracks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.playlist-track {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  border: 1px solid #e8c2bc;
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: #6d3040;
+  background: #fffaf6cc;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.playlist-track:hover,
+.playlist-track.is-active {
+  border-color: #bd6671;
+  background: #fff;
+  transform: translateY(-1px);
+}
+
+.playlist-track-artist {
+  font-family: var(--font-ui), sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a16e70;
+}
+
+.playlist-track-title {
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.spotify-embed {
+  width: 100%;
+  height: 152px;
+  border: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.playlist-note {
+  margin: 10px 0 0;
+  color: #a16e70;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.04em;
 }
 
 .love-bubbles {
@@ -817,6 +916,14 @@ h1 em {
   .keepsake-whisper {
     width: min(210px, 78vw);
     font-size: 12px;
+  }
+
+  .playlist-tracks {
+    grid-template-columns: 1fr;
+  }
+
+  .spotify-embed {
+    height: 152px;
   }
 
   .love-bubbles {

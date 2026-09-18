@@ -17,7 +17,7 @@ const loveNotes = [
   {
     label: 'Carta 1',
     title: 'Jessenia',
-    text: `A veces me pregunto cuándo pasó. Porque no fue un día concreto. No hubo música de fondo, ni una escena perfecta, ni una fecha que pueda señalar en un calendario.\n\nSimplemente un día me descubrí guardando cosas para ti. Una canción. Una frase. Una imagen. Una historia. Y luego otra. Y luego otra más. Como si me hubiera convertido en una especie de coleccionista de pequeñas cosas que me recuerdan a ti.\n\nY creo que ahí empezó el problema. Porque mientras más cosas guardaba, más me daba cuenta de que ya estabas ocupando demasiados espacios dentro de mi cabeza. Sin anuncio. Sin drama. Solo ahí.`,
+    text: `A veces me pregunto cuándo pasó. Porque no fue un día concreto. No hubo música de fondo, ni una escena perfecta, ni una fecha que pueda señalar en un calendario.\n\nSimplemente un día me descubrí guardando cosas para ti. Una canción. Una frase. Una música. Y luego otra. Y luego otra más. Como si me hubiera convertido en una especie de coleccionista de pequeñas cosas que me recuerdan a ti.\n\nY creo que ahí empezó el problema. Porque mientras más cosas guardaba, más me daba cuenta de que ya estabas ocupando demasiados espacios dentro de mi cabeza. Sin anuncio. Sin drama. Solo ahí.`,
   },
   {
     label: 'Carta 2',
@@ -40,16 +40,37 @@ const keepsakes = [
     whisper: 'La escribí, la borré, la volví a escribir. Al final solo quería que la leyeras.',
   },
   {
-    id: 'image',
-    mark: '◉',
-    label: 'Una imagen',
-    whisper: 'No es una foto tuya. Es un lugar bonito que se veía incompleto sin poder enseñártelo.',
+    id: 'music',
+    mark: '♫',
+    label: 'Una música',
+    whisper: 'Abrí esta playlist para ti. Elige una y déjala sonar.',
+  },
+]
+
+const playlist = [
+  {
+    id: 'die-for-you',
+    artist: 'The Weeknd',
+    title: 'Die For You',
+    spotifyId: '2LBqCSwhJGcFQeTHMVGwy3',
   },
   {
-    id: 'story',
-    mark: '※',
-    label: 'Una historia',
-    whisper: 'Empezó siendo cualquiera. Terminó siendo otra forma de decir tu nombre.',
+    id: 'love',
+    artist: 'Kendrick Lamar',
+    title: 'LOVE.',
+    spotifyId: '6PGoSes0D9eUDeeAafB2As',
+  },
+  {
+    id: 'going-home',
+    artist: 'Drake',
+    title: "Hold On, We're Going Home",
+    spotifyId: '14Rcq31SafFBHNEwXrtR2B',
+  },
+  {
+    id: 'passionfruit',
+    artist: 'Drake',
+    title: 'Passionfruit',
+    spotifyId: '38GZE9mex4GGFYULCo5Fi7',
   },
 ]
 
@@ -65,22 +86,33 @@ export default function Page() {
   const [openedNotes, setOpenedNotes] = useState<number[]>([])
   const [activeKeepsake, setActiveKeepsake] = useState<string | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(false)
+  const [showPlaylist, setShowPlaylist] = useState(false)
+  const [activeTrackId, setActiveTrackId] = useState(playlist[0].id)
   const [pointer, setPointer] = useState({ x: 50, y: 40 })
   const [showSecret, setShowSecret] = useState(false)
 
   const allNotesOpened = openedNotes.length === loveNotes.length
+  const activeTrack = playlist.find((track) => track.id === activeTrackId) ?? playlist[0]
 
   const constellation = useMemo(
     () =>
-      keepsakes.map((item, index) => ({
-        ...item,
-        style: {
-          '--x': `${12 + index * 22}%`,
-          '--y': `${18 + (index % 2) * 58}%`,
-          '--delay': `${index * 0.35}s`,
-          '--drift': `${10 + index * 4}s`,
-        } as CSSProperties,
-      })),
+      keepsakes.map((item, index) => {
+        const spots = [
+          { x: '22%', y: '28%' },
+          { x: '50%', y: '72%' },
+          { x: '78%', y: '30%' },
+        ]
+        const spot = spots[index] ?? spots[0]
+        return {
+          ...item,
+          style: {
+            '--x': spot.x,
+            '--y': spot.y,
+            '--delay': `${index * 0.35}s`,
+            '--drift': `${10 + index * 4}s`,
+          } as CSSProperties,
+        }
+      }),
     [],
   )
 
@@ -143,8 +175,17 @@ export default function Page() {
   }
 
   function toggleKeepsake(id: string) {
-    setActiveKeepsake((current) => (current === id ? null : id))
+    const next = activeKeepsake === id ? null : id
+    setActiveKeepsake(next)
     setOpenNote(null)
+
+    if (id === 'music') {
+      setShowPlaylist(next === 'music')
+      playSound('soft')
+      return
+    }
+
+    setShowPlaylist(false)
     playSound('soft')
   }
 
@@ -251,20 +292,51 @@ export default function Page() {
                   <button
                     key={item.id}
                     type="button"
-                    className={`keepsake ${isActive ? 'is-active' : ''}`}
+                    className={`keepsake ${isActive ? 'is-active' : ''} ${item.id === 'music' && showPlaylist ? 'is-playing' : ''}`}
                     style={item.style}
                     onClick={() => toggleKeepsake(item.id)}
                     aria-expanded={isActive}
+                    aria-pressed={item.id === 'music' ? showPlaylist : undefined}
                   >
                     <span className="keepsake-mark" aria-hidden="true">
                       {item.mark}
                     </span>
                     <span className="keepsake-label">{item.label}</span>
-                    {isActive ? <span className="keepsake-whisper">{item.whisper}</span> : null}
+                    {isActive && item.id !== 'music' ? (
+                      <span className="keepsake-whisper">{item.whisper}</span>
+                    ) : null}
                   </button>
                 )
               })}
             </div>
+
+            {showPlaylist ? (
+              <aside className="playlist-panel" aria-label="Playlist guardada para ti">
+                <p className="playlist-kicker">Canciones que te guardé</p>
+                <div className="playlist-tracks">
+                  {playlist.map((track) => (
+                    <button
+                      key={track.id}
+                      type="button"
+                      className={`playlist-track ${activeTrackId === track.id ? 'is-active' : ''}`}
+                      onClick={() => setActiveTrackId(track.id)}
+                    >
+                      <span className="playlist-track-artist">{track.artist}</span>
+                      <span className="playlist-track-title">{track.title}</span>
+                    </button>
+                  ))}
+                </div>
+                <iframe
+                  key={activeTrack.spotifyId}
+                  className="spotify-embed"
+                  title={`${activeTrack.title} — ${activeTrack.artist}`}
+                  src={`https://open.spotify.com/embed/track/${activeTrack.spotifyId}?utm_source=generator&theme=0`}
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  loading="lazy"
+                />
+                <p className="playlist-note">Reproduce desde Spotify. Si te pide login, es normal.</p>
+              </aside>
+            ) : null}
 
             <div className="love-bubbles" aria-label="Mensajes de amor">
               {loveNotes.map((note, index) => {
