@@ -17,7 +17,7 @@ const loveNotes = [
   {
     label: 'Carta 1',
     title: 'Jessenia',
-    text: `A veces me pregunto cuándo pasó. Porque no fue un día concreto. No hubo música de fondo, ni una escena perfecta, ni una fecha que pueda señalar en un calendario.\n\nSimplemente un día me descubrí guardando cosas para ti. Una canción. Una frase. Una música. Y luego otra. Y luego otra más. Como si me hubiera convertido en una especie de coleccionista de pequeñas cosas que me recuerdan a ti.\n\nY creo que ahí empezó el problema. Porque mientras más cosas guardaba, más me daba cuenta de que ya estabas ocupando demasiados espacios dentro de mi cabeza. Sin anuncio. Sin drama. Solo ahí.`,
+    text: `A veces me pregunto cuándo pasó. Porque no fue un día concreto. No hubo música de fondo, ni una escena perfecta, ni una fecha que pueda señalar en un calendario.\n\nSimplemente un día me descubrí guardando cosas para ti. Una frase. Una música. Y luego otra. Y luego otra más. Como si me hubiera convertido en una especie de coleccionista de pequeñas cosas que me recuerdan a ti.\n\nY creo que ahí empezó el problema. Porque mientras más cosas guardaba, más me daba cuenta de que ya estabas ocupando demasiados espacios dentro de mi cabeza. Sin anuncio. Sin drama. Solo ahí.`,
   },
   {
     label: 'Carta 2',
@@ -28,16 +28,11 @@ const loveNotes = [
 
 const keepsakes = [
   {
-    id: 'song',
-    mark: '♪',
-    label: 'Una canción',
-    whisper: 'Una que ni siquiera es buena. Pero igual la guardé porque sonaba a ti.',
-  },
-  {
     id: 'phrase',
     mark: '“',
     label: 'Una frase',
-    whisper: 'La escribí, la borré, la volví a escribir. Al final solo quería que la leyeras.',
+    whisper:
+      'Si el mundo se apagara un segundo, igual te encontraría: eres la única luz que aprendí a reconocer con los ojos cerrados.',
   },
   {
     id: 'music',
@@ -98,9 +93,8 @@ export default function Page() {
     () =>
       keepsakes.map((item, index) => {
         const spots = [
-          { x: '22%', y: '28%' },
-          { x: '50%', y: '72%' },
-          { x: '78%', y: '30%' },
+          { x: '32%', y: '38%' },
+          { x: '68%', y: '42%' },
         ]
         const spot = spots[index] ?? spots[0]
         return {
