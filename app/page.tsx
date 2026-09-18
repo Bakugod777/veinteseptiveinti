@@ -11,18 +11,18 @@ declare global {
 const loveNotes = [
   {
     label: 'Poema',
-    title: 'Inventario de una casualidad',
-    text: `Me preguntan qué es el amor y siempre me parece injusta la pregunta. Porque cómo se supone que uno explique algo que se fue construyendo en silencio. Algo que empezó siendo una conversación cualquiera y terminó apareciendo en todos lados.\n\nPorque ahora te encuentro en las canciones, incluso en las malas, sobre todo en las malas. En esas canciones absurdamente cursis que parecen escritas por alguien que jamás conoció el mundo real y aun así pienso: “Ojalá ella pudiera vivir en un lugar así”.\n\nTe encuentro en los atardeceres, en las películas, en las frases que leo y guardo durante horas porque quisiera enviártelas. Te encuentro en los días buenos porque quiero compartirlos contigo y en los días malos porque alguna parte de mí aprendió a buscar refugio en tu recuerdo.\n\nY entonces entendí algo: amar no era pensar en una persona todo el tiempo. Amar era descubrir que una persona terminó cambiando la forma en que miras todo lo demás. Como si hubieras llegado a mi vida y después hubieras empezado a aparecer en cada rincón de ella.\n\nY si algún día me preguntan qué es el arte, qué es la poesía, qué es el amor, no creo que responda con una definición. Creo que simplemente empezaría a hablar de ti.`,
+    title: 'En cosas que no son tú',
+    text: `Me di cuenta de que te amaba de la forma más absurda posible.\n\nNo fue cuando te extrañé. No fue cuando pensé en ti. Ni siquiera cuando me descubrí sonriendo por una tontería que dijiste.\n\nFue cuando empecé a verte en cosas que no tenían nada que ver contigo. En canciones que jamás escucharías. En películas que ni siquiera te gustan. En frases escritas por personas que murieron mucho antes de que naciéramos. Y aun así aparecías. Como si hubieras encontrado una forma extraña de expandirte por mi mundo sin pedir permiso.\n\nPorque ahora los lugares bonitos me parecen incompletos. Las historias buenas me dan ganas de contártelas. Y los días felices me duran un poco menos si no puedo compartirlos contigo.\n\nDurante mucho tiempo pensé que amar era encontrar a alguien. Ahora sospecho que es otra cosa: es cuando una persona deja de ocupar un lugar en tu vida y empieza a ocupar un lugar en tu forma de mirarla.`,
   },
   {
     label: 'Carta 1',
-    title: 'Jesenia',
-    text: `Hay algo que me parece curioso. Cuando uno es niño cree que ser detallista consiste en regalar muchas cosas. Luego crece y descubre que los mejores detalles casi nunca cuestan dinero.\n\nSon las canciones que uno guarda porque recuerdan a alguien, los mensajes que escribe y borra tres veces porque quiere encontrar las palabras correctas, las fotos que ve más de una vez sin razón aparente y los pequeños esfuerzos que nadie ve.\n\nPorque empecé a querer regalarte cosas. No cosas grandes, sino cosas que me hacían pensar en ti: una canción, una frase, una historia, un detalle tonto. Como si quisiera acercarte todas las cosas bonitas que encuentro por el camino.\n\nCuando uno quiere a alguien no busca impresionarlo. Busca hacerle la vida un poco más amable, un poco más ligera, un poco más bonita. Y me gusta que contigo no siento que tenga que defender cada opinión como si estuviera en una batalla. Me importa entenderte.\n\nContigo no siento vergüenza de ser quien soy. Supongo que eres uno de esos lugares raros donde una persona puede descansar de sí misma. Y eso vale más de lo que las palabras alcanzan a explicar.`,
+    title: 'Jessenia',
+    text: `A veces me pregunto cuándo pasó. Porque no fue un día concreto. No hubo música de fondo, ni una escena perfecta, ni una fecha que pueda señalar en un calendario.\n\nSimplemente un día me descubrí guardando cosas para ti. Una canción. Una frase. Una imagen. Una historia. Y luego otra. Y luego otra más. Como si me hubiera convertido en una especie de coleccionista de pequeñas cosas que me recuerdan a ti.\n\nY creo que ahí empezó el problema. Porque mientras más cosas guardaba, más me daba cuenta de que ya estabas ocupando demasiados espacios dentro de mi cabeza. Sin anuncio. Sin drama. Solo ahí.`,
   },
   {
     label: 'Carta 2',
-    title: 'Jesenia',
-    text: `A veces siento que quererte es parecido a entrar en uno de esos bazares enormes donde hay demasiadas cosas para mirar. Uno entra pensando que sabe qué busca y termina perdiéndose entre cosas que ni siquiera sabía que necesitaba.\n\nPorque contigo pasa algo parecido: siempre descubro algo nuevo, una idea, una historia, una forma distinta de ver el mundo. Y cuando creo que ya terminé de admirar una cosa aparece otra.\n\nMuchas personas creen que el amor aparece cuando encuentras a alguien perfecto. Yo cada vez creo menos en eso. Creo que el amor se parece más a una receta imposible, donde cada ingrediente parece innecesario y luego descubres que justamente eso era lo que le daba sabor a todo.\n\nTus ocurrencias, tus silencios, tus dudas, tus convicciones, tus días buenos y tus días malos: todo eso forma parte de ti y hace que seas tú.\n\nNo entendí lo que sentía cuando escribí algo bonito, sino cuando me di cuenta de que las cosas que más disfrutaba seguían estando incompletas si no podía compartirlas contigo. Sigues apareciendo en todas partes y la verdad, no quisiera que dejara de ser así.`,
+    title: 'Jessenia',
+    text: `Siento que quererte se parece a entrar contigo a un bazar inmenso. Uno de esos donde hay demasiadas cosas para mirar y cada estante te llama por un motivo distinto. Mientras yo veo algo pienso “esto seguro le gustaría”, y seguramente tú estás pensando exactamente lo mismo de otra cosa completamente distinta. Y al final resulta que estábamos mirando el mismo lugar todo el tiempo.\n\nSupongo que por eso me gusta tanto hablar contigo. Porque contigo nunca siento que tenga que explicarme completo. Como cuando dos personas están viendo la misma película y ninguna necesita contarle a la otra qué está pasando. Simplemente lo entienden.\n\nY no sé. Creo que eso es algo que cada vez encuentro menos en el mundo. Contigo, por suerte, todavía pasa.`,
   },
 ]
 
@@ -89,7 +89,7 @@ export default function Page() {
           <em>es contigo.</em>
         </h1>
         <p className="intro">
-          Jesenia, hice este pequeño rincón para guardar tres cosas que a veces no sé decirte en voz alta: lo que admiro de ti, lo que me haces sentir y todo lo que todavía quiero vivir contigo.
+          Jessenia, hice este rincón para dejarte tres cosas que a veces se me quedan a medias cuando te hablo: un poema, una carta, y la costumbre rara de guardarte pedazos del mundo.
         </p>
 
         {!isLetterOpen ? (
@@ -139,7 +139,7 @@ export default function Page() {
       </section>
 
       <footer className="footer-note">
-        Hecho con cariño, para la persona que hace mis días más bonitos.
+        Hecho para ti. Sin escena perfecta. Solo porque un día empecé a guardarte cosas.
       </footer>
     </main>
   )
