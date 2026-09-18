@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Mi lugar favorito es contigo',
-  description: 'Una pequeña carta digital para celebrar el amor y la amistad.',
+  title: 'Mi Detalle Para ti',
+  description: 'Una carta digital para Jessenia.',
   generator: 'v0.app',
   icons: {
     icon: [
