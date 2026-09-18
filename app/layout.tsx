@@ -4,7 +4,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Mi Detalle Para ti',
-  description: 'Una carta digital para Jessenia.',
+  description: 'Una carta digital para Jesenia.',
   generator: 'v0.app',
   icons: {
     icon: [
