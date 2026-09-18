@@ -16,12 +16,12 @@ const loveNotes = [
   },
   {
     label: 'Carta 1',
-    title: 'Jessenia',
+    title: 'Jesenia',
     text: `A veces me pregunto cuándo pasó. Porque no fue un día concreto. No hubo música de fondo, ni una escena perfecta, ni una fecha que pueda señalar en un calendario.\n\nSimplemente un día me descubrí guardando cosas para ti. Una canción. Una frase. Una imagen. Una historia. Y luego otra. Y luego otra más. Como si me hubiera convertido en una especie de coleccionista de pequeñas cosas que me recuerdan a ti.\n\nY creo que ahí empezó el problema. Porque mientras más cosas guardaba, más me daba cuenta de que ya estabas ocupando demasiados espacios dentro de mi cabeza. Sin anuncio. Sin drama. Solo ahí.`,
   },
   {
     label: 'Carta 2',
-    title: 'Jessenia',
+    title: 'Jesenia',
     text: `Siento que quererte se parece a entrar contigo a un bazar inmenso. Uno de esos donde hay demasiadas cosas para mirar y cada estante te llama por un motivo distinto. Mientras yo veo algo pienso “esto seguro le gustaría”, y seguramente tú estás pensando exactamente lo mismo de otra cosa completamente distinta. Y al final resulta que estábamos mirando el mismo lugar todo el tiempo.\n\nSupongo que por eso me gusta tanto hablar contigo. Porque contigo nunca siento que tenga que explicarme completo. Como cuando dos personas están viendo la misma película y ninguna necesita contarle a la otra qué está pasando. Simplemente lo entienden.\n\nY no sé. Creo que eso es algo que cada vez encuentro menos en el mundo. Contigo, por suerte, todavía pasa.`,
   },
 ]
