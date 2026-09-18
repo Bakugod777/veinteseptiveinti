@@ -1,319 +1,900 @@
-'use client'
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+@custom-variant dark (&:is(.dark *));
 
-declare global {
-  interface Window {
-    webkitAudioContext?: typeof AudioContext
+:root {
+  --ink: #3b1722;
+  --rose: #ad4e60;
+  --rose-deep: #8f3d4d;
+  --blush: #f4e7e1;
+  --paper: #fffaf6;
+  --muted: #8e5a60;
+  font-family: var(--font-display), Georgia, serif;
+  color: var(--ink);
+  background: var(--blush);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--blush);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+button {
+  font: inherit;
+}
+
+.love-page {
+  --mx: 50%;
+  --my: 40%;
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at var(--mx) var(--my), #fff8f2cc 0%, transparent 28%),
+    radial-gradient(circle at 50% -5%, #fffdf9 0%, #f4e7e1 42%, #e7cfc6 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 32px 24px;
+}
+
+.love-page::before {
+  content: '';
+  position: absolute;
+  inset: 18px;
+  border: 1px solid #ffffff80;
+  border-radius: 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.paper-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background-image:
+    radial-gradient(circle at 20% 20%, #8f3d4d22 0.6px, transparent 1px),
+    radial-gradient(circle at 80% 40%, #8f3d4d18 0.7px, transparent 1px),
+    radial-gradient(circle at 40% 80%, #8f3d4d14 0.5px, transparent 1px);
+  background-size: 18px 18px, 26px 26px, 22px 22px;
+  mix-blend-mode: multiply;
+}
+
+.pointer-glow {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  left: var(--mx);
+  top: var(--my);
+  translate: -50% -50%;
+  border-radius: 999px;
+  background: radial-gradient(circle, #ffe8df88 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(8px);
+  transition: left 0.25s ease, top 0.25s ease;
+  z-index: 0;
+}
+
+.ambient {
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0.42;
+  filter: blur(1px);
+  animation: drift 18s ease-in-out infinite alternate;
+}
+
+.ambient-one {
+  width: 320px;
+  height: 320px;
+  right: -150px;
+  top: 70px;
+  background: #e8b9b6;
+}
+
+.ambient-two {
+  width: 220px;
+  height: 220px;
+  left: -100px;
+  bottom: 40px;
+  background: #f1c5b5;
+  animation-delay: -6s;
+}
+
+.floating-orbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.floating-orbs span {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #fff6f0;
+  box-shadow: 0 0 18px #ffd8cdb8;
+  opacity: 0.55;
+  animation: float-orb 9s ease-in-out infinite;
+}
+
+.floating-orbs span:nth-child(1) {
+  left: 18%;
+  top: 28%;
+  animation-delay: 0s;
+}
+
+.floating-orbs span:nth-child(2) {
+  left: 72%;
+  top: 22%;
+  width: 5px;
+  height: 5px;
+  animation-delay: -2s;
+}
+
+.floating-orbs span:nth-child(3) {
+  left: 64%;
+  top: 68%;
+  width: 6px;
+  height: 6px;
+  animation-delay: -4s;
+}
+
+.floating-orbs span:nth-child(4) {
+  left: 28%;
+  top: 74%;
+  animation-delay: -1.5s;
+}
+
+.sound-toggle {
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #d9a5a280;
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: var(--muted);
+  background: #fffaf6a8;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.sound-toggle:hover {
+  transform: translateY(-2px);
+  border-color: #bd6671;
+  background: #fffaf6;
+}
+
+.sound-toggle.is-on {
+  color: #fffaf6;
+  border-color: #b75967;
+  background: #b75967;
+}
+
+.sound-toggle span {
+  font-size: 16px;
+  line-height: 0.7;
+}
+
+.topbar {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 940px);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  font-family: var(--font-ui), sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.topbar::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  margin-left: 14px;
+  background: linear-gradient(90deg, #d7a5a088, transparent);
+}
+
+.topbar-mark {
+  color: #b75967;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.topbar-date {
+  margin-left: auto;
+  color: #b58b88;
+  letter-spacing: 0.1em;
+}
+
+.hero {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 820px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: clamp(48px, 8vh, 84px) 0 48px;
+}
+
+.hero::after {
+  content: '19  ·  09  ·  2026';
+  margin-top: 30px;
+  color: #c39490;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+}
+
+.eyebrow {
+  margin: 0 0 20px;
+  color: #b75967;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  animation: fade-up 0.8s ease both;
+}
+
+h1 {
+  margin: 0;
+  color: #4a1e2c;
+  font-size: clamp(47px, 8vw, 86px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 0.96;
+  animation: fade-up 0.9s ease 0.08s both;
+}
+
+h1 em {
+  color: var(--rose);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.intro {
+  max-width: 430px;
+  margin: 27px 0 34px;
+  color: #825f61;
+  font-size: 17px;
+  line-height: 1.65;
+  animation: fade-up 1s ease 0.16s both;
+}
+
+.bubble-instruction {
+  margin: 2px 0 18px;
+  color: #a16e70;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.letter-intro,
+.letter-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.letter-intro {
+  min-height: 184px;
+}
+
+.letter-content {
+  animation: letter-reveal 0.55s ease both;
+}
+
+.progress-rail {
+  width: min(100%, 320px);
+  margin-bottom: 18px;
+  color: #a16e70;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.progress-track {
+  margin-top: 8px;
+  height: 3px;
+  border-radius: 999px;
+  background: #e7c7c2;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #d9808a, #b75967);
+  transition: width 0.45s ease;
+}
+
+.keepsake-sky {
+  position: relative;
+  width: min(100%, 700px);
+  height: 150px;
+  margin-bottom: 18px;
+}
+
+.keepsake {
+  --x: 20%;
+  --y: 30%;
+  --delay: 0s;
+  --drift: 12s;
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  translate: -50% -50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #e8c2bc;
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: #8a4c57;
+  background: #fffaf6d0;
+  box-shadow: 0 10px 24px #ae777328;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  animation: keepsake-float var(--drift) ease-in-out infinite alternate;
+  animation-delay: var(--delay);
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease;
+  z-index: 2;
+}
+
+.keepsake:hover,
+.keepsake.is-active {
+  transform: translateY(-4px) scale(1.04);
+  border-color: #bd6671;
+  background: #fff;
+  z-index: 4;
+}
+
+.keepsake-mark {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.keepsake-label {
+  font-family: var(--font-ui), sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.keepsake-whisper {
+  position: absolute;
+  top: calc(100% + 10px);
+  width: min(240px, 70vw);
+  padding: 12px 14px;
+  border: 1px solid #e9c4be;
+  border-radius: 12px;
+  background: #fffaf6f0;
+  color: #5f333c;
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: left;
+  box-shadow: 0 12px 28px #ae777330;
+  animation: fade-up 0.3s ease both;
+}
+
+.love-bubbles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  width: min(100%, 700px);
+  align-items: start;
+}
+
+.love-bubble-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 142px;
+}
+
+.love-bubble-item.was-opened:not(.is-open) .love-bubble {
+  opacity: 0.72;
+  filter: saturate(0.85);
+}
+
+@keyframes letter-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-const loveNotes = [
-  {
-    label: 'Poema',
-    title: 'En cosas que no son tú',
-    text: `Me di cuenta de que te amaba de la forma más absurda posible.\n\nNo fue cuando te extrañé. No fue cuando pensé en ti. Ni siquiera cuando me descubrí sonriendo por una tontería que dijiste.\n\nFue cuando empecé a verte en cosas que no tenían nada que ver contigo. En canciones que jamás escucharías. En películas que ni siquiera te gustan. En frases escritas por personas que murieron mucho antes de que naciéramos. Y aun así aparecías. Como si hubieras encontrado una forma extraña de expandirte por mi mundo sin pedir permiso.\n\nPorque ahora los lugares bonitos me parecen incompletos. Las historias buenas me dan ganas de contártelas. Y los días felices me duran un poco menos si no puedo compartirlos contigo.\n\nDurante mucho tiempo pensé que amar era encontrar a alguien. Ahora sospecho que es otra cosa: es cuando una persona deja de ocupar un lugar en tu vida y empieza a ocupar un lugar en tu forma de mirarla.`,
-  },
-  {
-    label: 'Carta 1',
-    title: 'Jessenia',
-    text: `A veces me pregunto cuándo pasó. Porque no fue un día concreto. No hubo música de fondo, ni una escena perfecta, ni una fecha que pueda señalar en un calendario.\n\nSimplemente un día me descubrí guardando cosas para ti. Una canción. Una frase. Una imagen. Una historia. Y luego otra. Y luego otra más. Como si me hubiera convertido en una especie de coleccionista de pequeñas cosas que me recuerdan a ti.\n\nY creo que ahí empezó el problema. Porque mientras más cosas guardaba, más me daba cuenta de que ya estabas ocupando demasiados espacios dentro de mi cabeza. Sin anuncio. Sin drama. Solo ahí.`,
-  },
-  {
-    label: 'Carta 2',
-    title: 'Jessenia',
-    text: `Siento que quererte se parece a entrar contigo a un bazar inmenso. Uno de esos donde hay demasiadas cosas para mirar y cada estante te llama por un motivo distinto. Mientras yo veo algo pienso “esto seguro le gustaría”, y seguramente tú estás pensando exactamente lo mismo de otra cosa completamente distinta. Y al final resulta que estábamos mirando el mismo lugar todo el tiempo.\n\nSupongo que por eso me gusta tanto hablar contigo. Porque contigo nunca siento que tenga que explicarme completo. Como cuando dos personas están viendo la misma película y ninguna necesita contarle a la otra qué está pasando. Simplemente lo entienden.\n\nY no sé. Creo que eso es algo que cada vez encuentro menos en el mundo. Contigo, por suerte, todavía pasa.`,
-  },
-]
-
-const keepsakes = [
-  {
-    id: 'song',
-    mark: '♪',
-    label: 'Una canción',
-    whisper: 'Una que ni siquiera es buena. Pero igual la guardé porque sonaba a ti.',
-  },
-  {
-    id: 'phrase',
-    mark: '“',
-    label: 'Una frase',
-    whisper: 'La escribí, la borré, la volví a escribir. Al final solo quería que la leyeras.',
-  },
-  {
-    id: 'image',
-    mark: '◉',
-    label: 'Una imagen',
-    whisper: 'No es una foto tuya. Es un lugar bonito que se veía incompleto sin poder enseñártelo.',
-  },
-  {
-    id: 'story',
-    mark: '※',
-    label: 'Una historia',
-    whisper: 'Empezó siendo cualquiera. Terminó siendo otra forma de decir tu nombre.',
-  },
-]
-
-const secretNote = {
-  title: 'Lo que no cabe en una burbuja',
-  text: `Si llegaste hasta aquí es porque abriste todo. Entonces te dejo esto sin metáfora:\n\nMe gusta cómo ocupas mi cabeza. Me gusta que el mundo se vuelva más interesante cuando pienso en contártelo. Y me gusta que contigo no tenga que ensayar tanto para ser yo.\n\nEso. Sin escena perfecta. Solo eso.`,
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-export default function Page() {
-  const [isLetterOpen, setIsLetterOpen] = useState(false)
-  const [isOpening, setIsOpening] = useState(false)
-  const [openNote, setOpenNote] = useState<number | null>(null)
-  const [openedNotes, setOpenedNotes] = useState<number[]>([])
-  const [activeKeepsake, setActiveKeepsake] = useState<string | null>(null)
-  const [soundEnabled, setSoundEnabled] = useState(false)
-  const [pointer, setPointer] = useState({ x: 50, y: 40 })
-  const [showSecret, setShowSecret] = useState(false)
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-18px, 22px, 0);
+  }
+}
 
-  const allNotesOpened = openedNotes.length === loveNotes.length
+@keyframes float-orb {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(-14px);
+    opacity: 0.8;
+  }
+}
 
-  const constellation = useMemo(
-    () =>
-      keepsakes.map((item, index) => ({
-        ...item,
-        style: {
-          '--x': `${12 + index * 22}%`,
-          '--y': `${18 + (index % 2) * 58}%`,
-          '--delay': `${index * 0.35}s`,
-          '--drift': `${10 + index * 4}s`,
-        } as CSSProperties,
-      })),
-    [],
-  )
+@keyframes keepsake-float {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-10px);
+  }
+}
 
-  useEffect(() => {
-    if (!allNotesOpened) return
-    const timer = window.setTimeout(() => setShowSecret(true), 700)
-    return () => window.clearTimeout(timer)
-  }, [allNotesOpened])
+.love-bubble {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  border: 1px solid #f4c8c4;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 25%, #fff8f4 0 7%, transparent 8%),
+    radial-gradient(circle at 35% 30%, #f4b9b8 0%, #d9757c 56%, #b94f61 100%);
+  box-shadow:
+    inset -9px -13px 18px #8f304044,
+    inset 8px 8px 15px #fff8f380,
+    0 13px 25px #9f4e5a35;
+  color: #fff9f3;
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
 
-  function playSound(kind: 'open' | 'pop' | 'soft') {
-    if (!soundEnabled || typeof window === 'undefined') return
+.love-bubble::before,
+.love-bubble::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: #fff6f2;
+  opacity: 0.5;
+}
 
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext
-    const context = new AudioContextClass()
-    const oscillator = context.createOscillator()
-    const gain = context.createGain()
-    const now = context.currentTime
+.love-bubble::before {
+  width: 8px;
+  height: 8px;
+  right: -8px;
+  bottom: 25px;
+}
 
-    if (kind === 'soft') {
-      oscillator.type = 'sine'
-      oscillator.frequency.setValueAtTime(420, now)
-      oscillator.frequency.exponentialRampToValueAtTime(680, now + 0.28)
-      gain.gain.setValueAtTime(0.0001, now)
-      gain.gain.exponentialRampToValueAtTime(0.05, now + 0.02)
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35)
-      oscillator.connect(gain).connect(context.destination)
-      oscillator.start(now)
-      oscillator.stop(now + 0.35)
-    } else {
-      const isPop = kind === 'pop'
-      oscillator.type = isPop ? 'sine' : 'triangle'
-      oscillator.frequency.setValueAtTime(isPop ? 520 : 330, now)
-      oscillator.frequency.exponentialRampToValueAtTime(isPop ? 920 : 660, now + (isPop ? 0.14 : 0.45))
-      gain.gain.setValueAtTime(0.0001, now)
-      gain.gain.exponentialRampToValueAtTime(isPop ? 0.12 : 0.08, now + 0.02)
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + (isPop ? 0.2 : 0.7))
-      oscillator.connect(gain).connect(context.destination)
-      oscillator.start(now)
-      oscillator.stop(now + (isPop ? 0.2 : 0.7))
-    }
+.love-bubble::after {
+  width: 4px;
+  height: 4px;
+  right: -15px;
+  bottom: 15px;
+}
 
-    oscillator.addEventListener('ended', () => void context.close())
+.love-bubble:hover {
+  transform: translateY(-7px) scale(1.04);
+  box-shadow:
+    inset -9px -13px 18px #8f304044,
+    inset 8px 8px 15px #fff8f380,
+    0 20px 30px #9f4e5a45;
+}
+
+.love-bubble-item.is-open .love-bubble {
+  animation: bubble-pop 0.48s ease forwards;
+  pointer-events: none;
+}
+
+.bubble-shine {
+  position: absolute;
+  width: 22px;
+  height: 12px;
+  top: 25px;
+  left: 28px;
+  border-radius: 50%;
+  background: #fff9f4aa;
+  transform: rotate(-35deg);
+}
+
+.bubble-heart {
+  display: block;
+  font-size: 28px;
+  text-shadow: 0 2px 4px #86384755;
+}
+
+.bubble-label {
+  display: block;
+  margin-top: 7px;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.love-bubble-item .love-note {
+  width: 100%;
+  margin-top: 17px;
+  padding: 17px 19px;
+  transform: translateY(-8px) scale(0.9);
+}
+
+.love-note {
+  backdrop-filter: blur(12px);
+  width: min(100%, 480px);
+  margin-top: 52px;
+  padding: 24px 28px 22px;
+  border: 1px solid #e9c4be;
+  border-radius: 14px;
+  background: #fffaf6b8;
+  box-shadow: 0 12px 30px #ae77731c;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+.love-bubble-item.is-open .love-note {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.love-note h2 {
+  margin: 7px 0 8px;
+  color: #6d3040;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+@keyframes bubble-pop {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  55% {
+    transform: scale(1.2);
+    opacity: 0.8;
+    filter: blur(0.4px);
+  }
+  100% {
+    transform: scale(0.05);
+    opacity: 0;
+  }
+}
+
+.envelope {
+  position: relative;
+  width: 148px;
+  height: 104px;
+  border: 0;
+  border-radius: 6px;
+  background: #bc6270;
+  box-shadow:
+    0 15px 28px #a44f5a42,
+    0 2px 4px #8e3e4c30;
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  perspective: 600px;
+}
+
+.envelope:hover {
+  transform: translateY(-4px) rotate(-1deg);
+  box-shadow:
+    0 20px 34px #a44f5a45,
+    0 2px 4px #8e3e4c30;
+}
+
+.envelope::before,
+.envelope::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-bottom: 1px solid #df9aa0;
+  pointer-events: none;
+}
+
+.envelope::before {
+  clip-path: polygon(0 0, 50% 61%, 100% 0, 100% 100%, 0 100%);
+  background: #a84f60;
+}
+
+.envelope::after {
+  clip-path: polygon(0 100%, 31% 48%, 50% 66%, 69% 48%, 100% 100%);
+  background: #c9717d;
+}
+
+.envelope-flap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 62%;
+  background: #ca717c;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top;
+  transition: transform 0.45s ease;
+  z-index: 2;
+}
+
+.envelope.is-open .envelope-flap {
+  transform: rotateX(180deg);
+}
+
+.envelope-heart {
+  position: absolute;
+  z-index: 3;
+  inset: 30px 0 auto;
+  color: #fff4ed;
+  font-size: 25px;
+  text-shadow: 0 2px 4px #86384755;
+}
+
+.envelope-label {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: -28px;
+  color: #955861;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.note-spark {
+  color: #bd6671;
+  font-size: 18px;
+}
+
+.love-note p {
+  margin: 8px 0 0;
+  color: #5f333c;
+  font-size: 16px;
+  line-height: 1.55;
+  white-space: pre-line;
+  text-align: left;
+}
+
+.secret-note {
+  width: min(100%, 520px);
+  margin-top: 28px;
+  padding: 24px 26px;
+  border: 1px solid #e3b7b1;
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, #fffaf6f2, #f8ebe6f0);
+  box-shadow: 0 18px 40px #ae777330;
+  text-align: left;
+  animation: letter-reveal 0.6s ease both;
+}
+
+.secret-kicker {
+  margin: 0 0 8px;
+  color: #b75967;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.secret-note h2 {
+  margin: 0 0 10px;
+  color: #6d3040;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.secret-note p {
+  margin: 0;
+  color: #5f333c;
+  font-size: 16px;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.footer-note {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding-top: 12px;
+  color: #ad8582;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .love-page {
+    padding: 22px 18px 18px;
   }
 
-  function openEnvelope() {
-    if (isOpening || isLetterOpen) return
-    setIsOpening(true)
-    playSound('open')
-    window.setTimeout(() => {
-      setIsLetterOpen(true)
-      setIsOpening(false)
-    }, 520)
+  .love-page::before {
+    inset: 10px;
+    border-radius: 20px;
   }
 
-  function openLoveNote(index: number) {
-    setOpenNote((current) => (current === index ? null : index))
-    setOpenedNotes((current) => (current.includes(index) ? current : [...current, index]))
-    setActiveKeepsake(null)
-    playSound('pop')
+  .sound-toggle {
+    top: 16px;
+    right: 16px;
+    padding: 7px 10px;
   }
 
-  function toggleKeepsake(id: string) {
-    setActiveKeepsake((current) => (current === id ? null : id))
-    setOpenNote(null)
-    playSound('soft')
+  .topbar-date,
+  .topbar::after {
+    display: none;
   }
 
-  return (
-    <main
-      className="love-page"
-      onPointerMove={(event) => {
-        const rect = event.currentTarget.getBoundingClientRect()
-        setPointer({
-          x: ((event.clientX - rect.left) / rect.width) * 100,
-          y: ((event.clientY - rect.top) / rect.height) * 100,
-        })
-      }}
-      style={
-        {
-          '--mx': `${pointer.x}%`,
-          '--my': `${pointer.y}%`,
-        } as CSSProperties
-      }
-    >
-      <div className="paper-grain" aria-hidden="true" />
-      <div className="pointer-glow" aria-hidden="true" />
-      <div className="ambient ambient-one" aria-hidden="true" />
-      <div className="ambient ambient-two" aria-hidden="true" />
-      <div className="floating-orbs" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-        <span />
-      </div>
+  .hero {
+    width: 100%;
+    padding-top: 68px;
+  }
 
-      <button
-        className={`sound-toggle ${soundEnabled ? 'is-on' : ''}`}
-        type="button"
-        onClick={() => {
-          setSoundEnabled((current) => !current)
-          if (!soundEnabled) window.setTimeout(() => playSound('open'), 0)
-        }}
-        aria-pressed={soundEnabled}
-        aria-label={soundEnabled ? 'Silenciar sonidos' : 'Activar sonidos'}
-      >
-        <span aria-hidden="true">{soundEnabled ? '♫' : '♪'}</span>
-        {soundEnabled ? 'Sonido activado' : 'Activar sonido'}
-      </button>
+  h1 {
+    font-size: clamp(44px, 14vw, 68px);
+  }
 
-      <header className="topbar">
-        <span className="topbar-mark" aria-hidden="true">
-          ♥
-        </span>
-        <span>Para ti, siempre</span>
-        <span className="topbar-date">19 · 09 · 2026</span>
-      </header>
+  .intro {
+    max-width: 340px;
+    margin-top: 22px;
+    font-size: 16px;
+    line-height: 1.55;
+  }
 
-      <section className="hero" aria-labelledby="page-title">
-        <p className="eyebrow">Una pequeña carta digital</p>
-        <h1 id="page-title">
-          Mi lugar favorito
-          <br />
-          <em>es contigo.</em>
-        </h1>
-        <p className="intro">
-          Jessenia, hice este rincón para dejarte tres cosas que a veces se me quedan a medias cuando te
-          hablo: un poema, una carta, y la costumbre rara de guardarte pedazos del mundo.
-        </p>
+  .keepsake-sky {
+    height: 170px;
+  }
 
-        {!isLetterOpen ? (
-          <div className="letter-intro">
-            <p className="bubble-instruction">Hay algo especial para ti</p>
-            <button
-              className={`envelope ${isOpening ? 'is-open' : ''}`}
-              type="button"
-              onClick={openEnvelope}
-              aria-label="Abrir carta de amor"
-            >
-              <span className="envelope-flap" aria-hidden="true" />
-              <span className="envelope-heart" aria-hidden="true">
-                ♥
-              </span>
-              <span className="envelope-label">{isOpening ? 'Abriendo…' : 'Abrir mi carta'}</span>
-            </button>
-          </div>
-        ) : (
-          <div className="letter-content">
-            <div className="progress-rail" aria-live="polite">
-              <span>
-                Cosas abiertas · {openedNotes.length}/{loveNotes.length}
-              </span>
-              <div className="progress-track">
-                <div
-                  className="progress-fill"
-                  style={{ width: `${(openedNotes.length / loveNotes.length) * 100}%` }}
-                />
-              </div>
-            </div>
+  .keepsake {
+    padding: 7px 10px;
+  }
 
-            <p className="bubble-instruction">
-              Toca una burbuja. Si quieres, también las cositas que fui guardando alrededor.
-            </p>
+  .keepsake-whisper {
+    width: min(210px, 78vw);
+    font-size: 12px;
+  }
 
-            <div className="keepsake-sky" aria-label="Cositas guardadas">
-              {constellation.map((item) => {
-                const isActive = activeKeepsake === item.id
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    className={`keepsake ${isActive ? 'is-active' : ''}`}
-                    style={item.style}
-                    onClick={() => toggleKeepsake(item.id)}
-                    aria-expanded={isActive}
-                  >
-                    <span className="keepsake-mark" aria-hidden="true">
-                      {item.mark}
-                    </span>
-                    <span className="keepsake-label">{item.label}</span>
-                    {isActive ? <span className="keepsake-whisper">{item.whisper}</span> : null}
-                  </button>
-                )
-              })}
-            </div>
+  .love-bubbles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+  }
 
-            <div className="love-bubbles" aria-label="Mensajes de amor">
-              {loveNotes.map((note, index) => {
-                const isOpen = openNote === index
-                const wasOpened = openedNotes.includes(index)
-                return (
-                  <div
-                    className={`love-bubble-item ${isOpen ? 'is-open' : ''} ${wasOpened ? 'was-opened' : ''}`}
-                    key={note.label}
-                  >
-                    <button
-                      className="love-bubble"
-                      type="button"
-                      onClick={() => openLoveNote(index)}
-                      aria-expanded={isOpen}
-                      aria-controls={`love-note-${index}`}
-                    >
-                      <span className="bubble-shine" aria-hidden="true" />
-                      <span className="bubble-heart" aria-hidden="true">
-                        ♥
-                      </span>
-                      <span className="bubble-label">{note.label}</span>
-                    </button>
-                    <div id={`love-note-${index}`} className="love-note" aria-live="polite">
-                      <span className="note-spark" aria-hidden="true">
-                        ✦
-                      </span>
-                      <h2>{note.title}</h2>
-                      <p>{note.text}</p>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+  .love-bubble-item {
+    min-width: 0;
+  }
 
-            {showSecret && allNotesOpened ? (
-              <aside className="secret-note" aria-live="polite">
-                <p className="secret-kicker">Desbloqueado</p>
-                <h2>{secretNote.title}</h2>
-                <p>{secretNote.text}</p>
-              </aside>
-            ) : null}
-          </div>
-        )}
-      </section>
+  .love-bubble {
+    width: min(27vw, 108px);
+    height: min(27vw, 108px);
+  }
 
-      <footer className="footer-note">
-        Hecho para ti. Sin escena perfecta. Solo porque un día empecé a guardarte cosas.
-      </footer>
-    </main>
-  )
+  .bubble-heart {
+    font-size: 23px;
+  }
+
+  .bubble-label {
+    font-size: 8px;
+    letter-spacing: 0.1em;
+  }
+
+  .love-bubble-item .love-note {
+    padding: 15px 13px;
+  }
+
+  .love-note h2 {
+    font-size: 18px;
+  }
+
+  .love-note p,
+  .secret-note p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .footer-note {
+    max-width: 270px;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero {
+    padding-top: 52px;
+  }
+
+  .eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+  }
+
+  .bubble-instruction {
+    max-width: 280px;
+    line-height: 1.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer base {
+  * {
+    outline-color: #bd6671;
+  }
+}
+
+@theme inline {
+  --color-background: #f4e7e1;
+  --color-foreground: #3b1722;
 }
