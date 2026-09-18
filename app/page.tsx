@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 
 declare global {
   interface Window {
@@ -16,22 +16,81 @@ const loveNotes = [
   },
   {
     label: 'Carta 1',
-    title: 'Jesenia',
+    title: 'Jessenia',
     text: `A veces me pregunto cuándo pasó. Porque no fue un día concreto. No hubo música de fondo, ni una escena perfecta, ni una fecha que pueda señalar en un calendario.\n\nSimplemente un día me descubrí guardando cosas para ti. Una canción. Una frase. Una imagen. Una historia. Y luego otra. Y luego otra más. Como si me hubiera convertido en una especie de coleccionista de pequeñas cosas que me recuerdan a ti.\n\nY creo que ahí empezó el problema. Porque mientras más cosas guardaba, más me daba cuenta de que ya estabas ocupando demasiados espacios dentro de mi cabeza. Sin anuncio. Sin drama. Solo ahí.`,
   },
   {
     label: 'Carta 2',
-    title: 'Jesenia',
+    title: 'Jessenia',
     text: `Siento que quererte se parece a entrar contigo a un bazar inmenso. Uno de esos donde hay demasiadas cosas para mirar y cada estante te llama por un motivo distinto. Mientras yo veo algo pienso “esto seguro le gustaría”, y seguramente tú estás pensando exactamente lo mismo de otra cosa completamente distinta. Y al final resulta que estábamos mirando el mismo lugar todo el tiempo.\n\nSupongo que por eso me gusta tanto hablar contigo. Porque contigo nunca siento que tenga que explicarme completo. Como cuando dos personas están viendo la misma película y ninguna necesita contarle a la otra qué está pasando. Simplemente lo entienden.\n\nY no sé. Creo que eso es algo que cada vez encuentro menos en el mundo. Contigo, por suerte, todavía pasa.`,
   },
 ]
 
+const keepsakes = [
+  {
+    id: 'song',
+    mark: '♪',
+    label: 'Una canción',
+    whisper: 'Una que ni siquiera es buena. Pero igual la guardé porque sonaba a ti.',
+  },
+  {
+    id: 'phrase',
+    mark: '“',
+    label: 'Una frase',
+    whisper: 'La escribí, la borré, la volví a escribir. Al final solo quería que la leyeras.',
+  },
+  {
+    id: 'image',
+    mark: '◉',
+    label: 'Una imagen',
+    whisper: 'No es una foto tuya. Es un lugar bonito que se veía incompleto sin poder enseñártelo.',
+  },
+  {
+    id: 'story',
+    mark: '※',
+    label: 'Una historia',
+    whisper: 'Empezó siendo cualquiera. Terminó siendo otra forma de decir tu nombre.',
+  },
+]
+
+const secretNote = {
+  title: 'Lo que no cabe en una burbuja',
+  text: `Si llegaste hasta aquí es porque abriste todo. Entonces te dejo esto sin metáfora:\n\nMe gusta cómo ocupas mi cabeza. Me gusta que el mundo se vuelva más interesante cuando pienso en contártelo. Y me gusta que contigo no tenga que ensayar tanto para ser yo.\n\nEso. Sin escena perfecta. Solo eso.`,
+}
+
 export default function Page() {
   const [isLetterOpen, setIsLetterOpen] = useState(false)
+  const [isOpening, setIsOpening] = useState(false)
   const [openNote, setOpenNote] = useState<number | null>(null)
+  const [openedNotes, setOpenedNotes] = useState<number[]>([])
+  const [activeKeepsake, setActiveKeepsake] = useState<string | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(false)
+  const [pointer, setPointer] = useState({ x: 50, y: 40 })
+  const [showSecret, setShowSecret] = useState(false)
 
-  function playSound(kind: 'open' | 'pop') {
+  const allNotesOpened = openedNotes.length === loveNotes.length
+
+  const constellation = useMemo(
+    () =>
+      keepsakes.map((item, index) => ({
+        ...item,
+        style: {
+          '--x': `${12 + index * 22}%`,
+          '--y': `${18 + (index % 2) * 58}%`,
+          '--delay': `${index * 0.35}s`,
+          '--drift': `${10 + index * 4}s`,
+        } as CSSProperties,
+      })),
+    [],
+  )
+
+  useEffect(() => {
+    if (!allNotesOpened) return
+    const timer = window.setTimeout(() => setShowSecret(true), 700)
+    return () => window.clearTimeout(timer)
+  }, [allNotesOpened])
+
+  function playSound(kind: 'open' | 'pop' | 'soft') {
     if (!soundEnabled || typeof window === 'undefined') return
 
     const AudioContextClass = window.AudioContext || window.webkitAudioContext
@@ -39,28 +98,84 @@ export default function Page() {
     const oscillator = context.createOscillator()
     const gain = context.createGain()
     const now = context.currentTime
-    const isPop = kind === 'pop'
 
-    oscillator.type = isPop ? 'sine' : 'triangle'
-    oscillator.frequency.setValueAtTime(isPop ? 520 : 330, now)
-    oscillator.frequency.exponentialRampToValueAtTime(isPop ? 920 : 660, now + (isPop ? 0.14 : 0.45))
-    gain.gain.setValueAtTime(0.0001, now)
-    gain.gain.exponentialRampToValueAtTime(isPop ? 0.12 : 0.08, now + 0.02)
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + (isPop ? 0.2 : 0.7))
-    oscillator.connect(gain).connect(context.destination)
-    oscillator.start(now)
-    oscillator.stop(now + (isPop ? 0.2 : 0.7))
+    if (kind === 'soft') {
+      oscillator.type = 'sine'
+      oscillator.frequency.setValueAtTime(420, now)
+      oscillator.frequency.exponentialRampToValueAtTime(680, now + 0.28)
+      gain.gain.setValueAtTime(0.0001, now)
+      gain.gain.exponentialRampToValueAtTime(0.05, now + 0.02)
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35)
+      oscillator.connect(gain).connect(context.destination)
+      oscillator.start(now)
+      oscillator.stop(now + 0.35)
+    } else {
+      const isPop = kind === 'pop'
+      oscillator.type = isPop ? 'sine' : 'triangle'
+      oscillator.frequency.setValueAtTime(isPop ? 520 : 330, now)
+      oscillator.frequency.exponentialRampToValueAtTime(isPop ? 920 : 660, now + (isPop ? 0.14 : 0.45))
+      gain.gain.setValueAtTime(0.0001, now)
+      gain.gain.exponentialRampToValueAtTime(isPop ? 0.12 : 0.08, now + 0.02)
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + (isPop ? 0.2 : 0.7))
+      oscillator.connect(gain).connect(context.destination)
+      oscillator.start(now)
+      oscillator.stop(now + (isPop ? 0.2 : 0.7))
+    }
+
     oscillator.addEventListener('ended', () => void context.close())
+  }
+
+  function openEnvelope() {
+    if (isOpening || isLetterOpen) return
+    setIsOpening(true)
+    playSound('open')
+    window.setTimeout(() => {
+      setIsLetterOpen(true)
+      setIsOpening(false)
+    }, 520)
   }
 
   function openLoveNote(index: number) {
     setOpenNote((current) => (current === index ? null : index))
+    setOpenedNotes((current) => (current.includes(index) ? current : [...current, index]))
+    setActiveKeepsake(null)
     playSound('pop')
   }
 
+  function toggleKeepsake(id: string) {
+    setActiveKeepsake((current) => (current === id ? null : id))
+    setOpenNote(null)
+    playSound('soft')
+  }
+
   return (
-    <main className="love-page">
+    <main
+      className="love-page"
+      onPointerMove={(event) => {
+        const rect = event.currentTarget.getBoundingClientRect()
+        setPointer({
+          x: ((event.clientX - rect.left) / rect.width) * 100,
+          y: ((event.clientY - rect.top) / rect.height) * 100,
+        })
+      }}
+      style={
+        {
+          '--mx': `${pointer.x}%`,
+          '--my': `${pointer.y}%`,
+        } as CSSProperties
+      }
+    >
+      <div className="paper-grain" aria-hidden="true" />
+      <div className="pointer-glow" aria-hidden="true" />
       <div className="ambient ambient-one" aria-hidden="true" />
+      <div className="ambient ambient-two" aria-hidden="true" />
+      <div className="floating-orbs" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+        <span />
+      </div>
+
       <button
         className={`sound-toggle ${soundEnabled ? 'is-on' : ''}`}
         type="button"
@@ -74,10 +189,11 @@ export default function Page() {
         <span aria-hidden="true">{soundEnabled ? '♫' : '♪'}</span>
         {soundEnabled ? 'Sonido activado' : 'Activar sonido'}
       </button>
-      <div className="ambient ambient-two" aria-hidden="true" />
 
       <header className="topbar">
-        <span className="topbar-mark" aria-hidden="true">♥</span>
+        <span className="topbar-mark" aria-hidden="true">
+          ♥
+        </span>
         <span>Para ti, siempre</span>
         <span className="topbar-date">19 · 09 · 2026</span>
       </header>
@@ -85,35 +201,80 @@ export default function Page() {
       <section className="hero" aria-labelledby="page-title">
         <p className="eyebrow">Una pequeña carta digital</p>
         <h1 id="page-title">
-          Mi lugar favorito<br />
+          Mi lugar favorito
+          <br />
           <em>es contigo.</em>
         </h1>
         <p className="intro">
-          Jesenia, hice este rincón para dejarte tres cosas que a veces se me quedan a medias cuando te hablo: un poema, una carta, y la costumbre rara de guardarte pedazos del mundo.
+          Jessenia, hice este rincón para dejarte tres cosas que a veces se me quedan a medias cuando te
+          hablo: un poema, una carta, y la costumbre rara de guardarte pedazos del mundo.
         </p>
 
         {!isLetterOpen ? (
           <div className="letter-intro">
             <p className="bubble-instruction">Hay algo especial para ti</p>
             <button
-              className="envelope"
+              className={`envelope ${isOpening ? 'is-open' : ''}`}
               type="button"
-              onClick={() => setIsLetterOpen(true)}
+              onClick={openEnvelope}
               aria-label="Abrir carta de amor"
             >
               <span className="envelope-flap" aria-hidden="true" />
-              <span className="envelope-heart" aria-hidden="true">♥</span>
-              <span className="envelope-label">Abrir mi carta</span>
+              <span className="envelope-heart" aria-hidden="true">
+                ♥
+              </span>
+              <span className="envelope-label">{isOpening ? 'Abriendo…' : 'Abrir mi carta'}</span>
             </button>
           </div>
         ) : (
           <div className="letter-content">
-            <p className="bubble-instruction">La carta está abierta. Toca una burbuja y deja que el mensaje aparezca</p>
+            <div className="progress-rail" aria-live="polite">
+              <span>
+                Cosas abiertas · {openedNotes.length}/{loveNotes.length}
+              </span>
+              <div className="progress-track">
+                <div
+                  className="progress-fill"
+                  style={{ width: `${(openedNotes.length / loveNotes.length) * 100}%` }}
+                />
+              </div>
+            </div>
+
+            <p className="bubble-instruction">
+              Toca una burbuja. Si quieres, también las cositas que fui guardando alrededor.
+            </p>
+
+            <div className="keepsake-sky" aria-label="Cositas guardadas">
+              {constellation.map((item) => {
+                const isActive = activeKeepsake === item.id
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={`keepsake ${isActive ? 'is-active' : ''}`}
+                    style={item.style}
+                    onClick={() => toggleKeepsake(item.id)}
+                    aria-expanded={isActive}
+                  >
+                    <span className="keepsake-mark" aria-hidden="true">
+                      {item.mark}
+                    </span>
+                    <span className="keepsake-label">{item.label}</span>
+                    {isActive ? <span className="keepsake-whisper">{item.whisper}</span> : null}
+                  </button>
+                )
+              })}
+            </div>
+
             <div className="love-bubbles" aria-label="Mensajes de amor">
               {loveNotes.map((note, index) => {
                 const isOpen = openNote === index
+                const wasOpened = openedNotes.includes(index)
                 return (
-                  <div className={`love-bubble-item ${isOpen ? 'is-open' : ''}`} key={note.label}>
+                  <div
+                    className={`love-bubble-item ${isOpen ? 'is-open' : ''} ${wasOpened ? 'was-opened' : ''}`}
+                    key={note.label}
+                  >
                     <button
                       className="love-bubble"
                       type="button"
@@ -122,11 +283,15 @@ export default function Page() {
                       aria-controls={`love-note-${index}`}
                     >
                       <span className="bubble-shine" aria-hidden="true" />
-                      <span className="bubble-heart" aria-hidden="true">♥</span>
+                      <span className="bubble-heart" aria-hidden="true">
+                        ♥
+                      </span>
                       <span className="bubble-label">{note.label}</span>
                     </button>
                     <div id={`love-note-${index}`} className="love-note" aria-live="polite">
-                      <span className="note-spark" aria-hidden="true">✦</span>
+                      <span className="note-spark" aria-hidden="true">
+                        ✦
+                      </span>
                       <h2>{note.title}</h2>
                       <p>{note.text}</p>
                     </div>
@@ -134,6 +299,14 @@ export default function Page() {
                 )
               })}
             </div>
+
+            {showSecret && allNotesOpened ? (
+              <aside className="secret-note" aria-live="polite">
+                <p className="secret-kicker">Desbloqueado</p>
+                <h2>{secretNote.title}</h2>
+                <p>{secretNote.text}</p>
+              </aside>
+            ) : null}
           </div>
         )}
       </section>
